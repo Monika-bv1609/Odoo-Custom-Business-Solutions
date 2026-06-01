@@ -15,6 +15,11 @@ export class AIChat extends Component {
 
             loading: false,
 
+            conversationContext: {
+
+                employeeName: null,
+            },
+
             messages: [
 
                 {
@@ -48,9 +53,10 @@ export class AIChat extends Component {
 
         setTimeout(() => {
 
-            const container = document.querySelector(
-                ".ai-chat-messages"
-            );
+            const container =
+                document.querySelector(
+                    ".ai-chat-messages"
+                );
 
             if (container) {
 
@@ -61,13 +67,57 @@ export class AIChat extends Component {
         }, 0);
     }
 
+    extractEmployeeName(question) {
+
+        const lower =
+            question.toLowerCase();
+
+        if (
+            lower.startsWith(
+                "find employee "
+            )
+        ) {
+
+            return question
+                .replace(
+                    /find employee/i,
+                    ""
+                )
+                .trim();
+        }
+
+        return null;
+    }
+
     async sendMessage() {
 
-        if (!this.state.message.trim()) {
+        if (
+            !this.state.message.trim()
+        ) {
             return;
         }
 
-        const userMessage = this.state.message;
+        const userMessage =
+            this.state.message;
+
+        const employeeName =
+            this.extractEmployeeName(
+                userMessage
+            );
+
+        if (employeeName) {
+
+            this.state
+                .conversationContext
+                .employeeName =
+                employeeName;
+
+            console.log(
+                "Memory Updated:",
+                this.state
+                    .conversationContext
+            );
+        }
 
         this.state.messages.push({
 
@@ -89,28 +139,29 @@ export class AIChat extends Component {
 
         try {
 
-            const response = await fetch(
-                "http://127.0.0.1:8000/ask-hr",
-                {
-                    method: "POST",
+            const response =
+                await fetch(
+                    "http://127.0.0.1:8000/ask-hr",
+                    {
+                        method: "POST",
 
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-                    },
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+                        },
 
-                    body: JSON.stringify({
-
-                        question:
-                            userMessage,
-                    }),
-                }
-            );
+                        body: JSON.stringify({
+                            question:
+                                userMessage,
+                        }),
+                    }
+                );
 
             const data =
                 await response.json();
 
-            this.state.loading = false;
+            this.state.loading =
+                false;
 
             this.state.messages.push({
 
@@ -128,7 +179,8 @@ export class AIChat extends Component {
 
         } catch (error) {
 
-            this.state.loading = false;
+            this.state.loading =
+                false;
 
             this.state.messages.push({
 
@@ -147,74 +199,6 @@ export class AIChat extends Component {
 
             this.scrollToBottom();
         }
-    }
-
-    async sendMessage() {
-
-        if (!this.state.message.trim()) {
-            return;
-        }
-
-        const userMessage = this.state.message;
-
-        this.state.messages.push({
-            sender: "user",
-            text: userMessage,
-        });
-
-        this.state.message = "";
-
-        this.scrollToBottom();
-
-        try {
-
-            const response = await fetch(
-                "http://127.0.0.1:8000/ask-hr",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        question: userMessage,
-                    }),
-                }
-            );
-
-            const data = await response.json();
-
-            this.state.messages.push({
-                sender: "ai",
-                text: data.answer,
-            });
-
-            this.scrollToBottom();
-
-        } catch (error) {
-
-            this.state.messages.push({
-                sender: "ai",
-                text: "Unable to connect to HR Agent.",
-            });
-
-            console.error(error);
-        }
-    }
-
-    scrollToBottom() {
-
-        setTimeout(() => {
-
-            const container = document.querySelector(
-                ".ai-chat-messages"
-            );
-
-            if (container) {
-                container.scrollTop =
-                    container.scrollHeight;
-            }
-
-        }, 0);
     }
 }
 
