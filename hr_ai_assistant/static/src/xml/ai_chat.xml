@@ -27,7 +27,7 @@
                     <t
                         t-foreach="state.messages"
                         t-as="msg"
-                        t-key="msg.text"
+                        t-key="msg.id"
                     >
 
                         <div
@@ -38,15 +38,28 @@
 
                     </t>
 
+                    <t t-if="state.loading">
+
+                        <div
+                            class="message ai"
+                        >
+                            Thinking...
+                        </div>
+
+                    </t>
+
                 </div>
 
-                <div class="ai-chat-input-area">
+                <div
+                    class="ai-chat-input-area"
+                >
 
                     <input
                         type="text"
                         class="ai-chat-input"
                         placeholder="Ask HR..."
                         t-model="state.message"
+                        t-on-keydown="onKeyDown"
                     />
 
                     <button
