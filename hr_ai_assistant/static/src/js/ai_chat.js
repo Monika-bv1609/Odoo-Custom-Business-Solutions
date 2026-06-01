@@ -17,7 +17,7 @@ export class AIChat extends Component {
         this.state.open = !this.state.open;
     }
 
-    sendMessage() {
+    async sendMessage() {
 
         if (!this.state.message.trim()) {
             return;
@@ -34,16 +34,39 @@ export class AIChat extends Component {
 
         this.scrollToBottom();
 
-        setTimeout(() => {
+        try {
+
+            const response = await fetch(
+                "http://127.0.0.1:8000/ask-hr",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        question: userMessage,
+                    }),
+                }
+            );
+
+            const data = await response.json();
 
             this.state.messages.push({
                 sender: "ai",
-                text: "This is a dummy AI response.",
+                text: data.answer,
             });
 
             this.scrollToBottom();
 
-        }, 300);
+        } catch (error) {
+
+            this.state.messages.push({
+                sender: "ai",
+                text: "Unable to connect to HR Agent.",
+            });
+
+            console.error(error);
+        }
     }
 
     scrollToBottom() {
