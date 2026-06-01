@@ -17,13 +17,60 @@
                 t-if="state.open"
                 class="ai-chat-popup"
             >
+
                 <div class="ai-chat-header">
                     HR AI Assistant
                 </div>
 
-                <div class="ai-chat-body">
-                    Chat UI coming soon...
+                <div class="ai-chat-messages">
+
+                    <t
+                        t-foreach="state.messages"
+                        t-as="msg"
+                        t-key="msg.id"
+                    >
+
+                        <div
+                            t-att-class="'message ' + msg.sender"
+                        >
+                            <t t-esc="msg.text"/>
+                        </div>
+
+                    </t>
+
+                    <t t-if="state.loading">
+
+                        <div
+                            class="message ai"
+                        >
+                            Thinking...
+                        </div>
+
+                    </t>
+
                 </div>
+
+                <div
+                    class="ai-chat-input-area"
+                >
+
+                    <input
+                        type="text"
+                        class="ai-chat-input"
+                        placeholder="Ask HR..."
+                        t-model="state.message"
+                        t-on-keydown="onKeyDown"
+                    />
+
+                    <button
+                        class="send-btn"
+                        t-on-click="sendMessage"
+                    >
+                        Send
+                    </button>
+
+                </div>
+
             </div>
 
         </div>
