@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+    <t t-name="hr_ai_assistant.AIChat">
+
+        <div class="ai-chat-container">
+
+            <button
+                class="ai-chat-button"
+                t-on-click="toggleChat"
+            >
+                🤖
+            </button>
+
+            <div
+                t-if="state.open"
+                class="ai-chat-popup"
+            >
+                <div class="ai-chat-header">
+                    HR AI Assistant
+                </div>
+
+                <div class="ai-chat-body">
+                    Chat UI coming soon...
+                </div>
+            </div>
+
+        </div>
+
+    </t>
+
+</templates>

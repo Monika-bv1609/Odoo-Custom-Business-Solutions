@@ -1,0 +1,35 @@
+.ai-chat-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 24px;
+    z-index: 9999;
+    cursor: pointer;
+}
+
+.ai-chat-popup {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+
+    width: 350px;
+    height: 450px;
+
+    background: white;
+    border: 1px solid #ddd;
+
+    z-index: 9999;
+}
+
+.ai-chat-header {
+    padding: 12px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+}
+
+.ai-chat-body {
+    padding: 12px;
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_hr_ai_assistant" model="ir.actions.client">
+        <field name="name">HR AI Assistant</field>
+        <field name="tag">hr_ai_assistant</field>
+    </record>
+
+    <menuitem
+        id="menu_hr_ai_assistant"
+        name="AI Assistant"
+        parent="hr.menu_hr_root"
+        action="action_hr_ai_assistant"
+        sequence="99"
+    />
+
+</odoo>
