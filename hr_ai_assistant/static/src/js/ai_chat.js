@@ -2,6 +2,7 @@
 
 import { Component, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+import { session } from "@web/session";
 
 export class AIChat extends Component {
 
@@ -51,6 +52,23 @@ export class AIChat extends Component {
 
         try {
 
+            const currentUser = session
+                .storeData["res.partner"]
+                .find(
+                    partner =>
+                        partner.active === true
+                );
+
+            console.log(
+                "CURRENT USER:",
+                currentUser
+            );
+
+            console.log(
+                "USER ID:",
+                currentUser.userId
+            );
+
             const response = await fetch(
                 "http://127.0.0.1:8000/ask-hr",
                 {
@@ -60,6 +78,7 @@ export class AIChat extends Component {
                     },
                     body: JSON.stringify({
                         question: userMessage,
+                        user_id: currentUser.userId,
                     }),
                 }
             );
