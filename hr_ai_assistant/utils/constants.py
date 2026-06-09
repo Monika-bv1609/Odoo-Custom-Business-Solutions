@@ -1,0 +1,1 @@
+RAG_UPLOAD_URL = "http://localhost:8000/upload-pdf"
