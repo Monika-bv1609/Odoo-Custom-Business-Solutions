@@ -1,0 +1,55 @@
+<odoo>
+
+    <record id="view_ai_document_tree" model="ir.ui.view">
+        <field name="name">ai.document.tree</field>
+        <field name="model">ai.document</field>
+        <field name="arch" type="xml">
+
+            <list>
+                <field name="name"/>
+                <field name="document_type"/>
+                <field name="filename"/>
+                <field name="active"/>
+            </list>
+
+        </field>
+    </record>
+
+    <record id="view_ai_document_form" model="ir.ui.view">
+        <field name="name">ai.document.form</field>
+        <field name="model">ai.document</field>
+        <field name="arch" type="xml">
+
+            <form>
+
+                <sheet>
+
+                    <group>
+
+                        <field name="name"/>
+
+                        <field name="document_type"/>
+
+                        <field name="attachment"
+                               filename="filename"/>
+
+                        <field name="filename"/>
+
+                        <field name="active"/>
+
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+    </record>
+
+    <record id="action_ai_document" model="ir.actions.act_window">
+        <field name="name">AI Knowledge Base</field>
+        <field name="res_model">ai.document</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

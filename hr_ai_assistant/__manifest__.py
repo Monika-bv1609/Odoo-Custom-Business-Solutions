@@ -10,6 +10,8 @@
         "hr"
     ],
     "data": [
+        "security/ir.model.access.csv",
+        "views/ai_document_views.xml",
         "views/ai_assistant_menu.xml",
     ],
     "assets": {
