@@ -1,4 +1,11 @@
-from odoo import models, fields
+import base64
+import requests
+from io import BytesIO
+
+from odoo import models, fields, api
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class AIDocument(models.Model):
@@ -34,3 +41,75 @@ class AIDocument(models.Model):
     active = fields.Boolean(
         default=True
     )
+
+
+    def _send_pdf_to_rag(self):
+        _logger.info("======= INSIDE _send_pdf_to_rag")
+        self.ensure_one()
+
+        if not self.attachment:
+            return
+
+        pdf_content = base64.b64decode(
+            self.attachment
+        )
+
+        files = {
+            "files": (
+                self.filename,
+                BytesIO(pdf_content),
+                "application/pdf"
+            )
+        }
+
+        response = requests.post(
+            "http://127.0.0.1:8000/read-pdf",
+            files={
+                "files": (
+                    self.filename,
+                    BytesIO(pdf_content),
+                    "application/pdf"
+                )
+            },
+            timeout=60
+        )
+
+        response.raise_for_status()
+
+        return response.json()
+
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        _logger.info("/////// INSIDE CREATE")
+
+        records = super().create(vals_list)
+
+        for record in records:
+            try:
+                record._send_pdf_to_rag()
+            except Exception as e:
+                _logger.exception(
+                    "RAG upload failed for document %s",
+                    record.id
+                )
+
+        return records
+
+
+    def write(self, vals):
+
+        result = super().write(vals)
+
+        if "attachment" in vals:
+
+            for record in self:
+                try:
+                    record._send_pdf_to_rag()
+                except Exception as e:
+                    _logger.exception(
+                        "RAG update failed for document %s",
+                        record.id
+                    )
+
+        return result
