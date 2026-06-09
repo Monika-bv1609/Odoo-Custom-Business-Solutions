@@ -14,4 +14,11 @@
         sequence="99"
     />
 
+    <menuitem
+        id="menu_ai_documents"
+        name="Knowledge Base"
+        parent="hr.menu_hr_root"
+        action="action_ai_document"
+        sequence="20"/>
+
 </odoo>
