@@ -70,7 +70,7 @@ export class AIChat extends Component {
             );
 
             const response = await fetch(
-                "http://127.0.0.1:8000/ask-hr",
+                "http://127.0.0.1:8001/ask-hr",
                 {
                     method: "POST",
                     headers: {
@@ -84,6 +84,9 @@ export class AIChat extends Component {
             );
 
             const data = await response.json();
+
+            console.log("FULL RESPONSE:", data);
+            alert(JSON.stringify(data));
 
             this.state.messages.push({
                 id: Date.now() + 1,
