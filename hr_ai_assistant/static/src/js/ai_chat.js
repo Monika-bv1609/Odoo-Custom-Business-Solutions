@@ -85,9 +85,6 @@ export class AIChat extends Component {
 
             const data = await response.json();
 
-            console.log("FULL RESPONSE:", data);
-            alert(JSON.stringify(data));
-
             this.state.messages.push({
                 id: Date.now() + 1,
                 sender: "ai",
