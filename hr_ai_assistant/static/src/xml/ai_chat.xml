@@ -38,16 +38,6 @@
 
                     </t>
 
-                    <t t-if="state.loading">
-
-                        <div
-                            class="message ai"
-                        >
-                            Thinking...
-                        </div>
-
-                    </t>
-
                 </div>
 
                 <div
@@ -65,8 +55,17 @@
                     <button
                         class="send-btn"
                         t-on-click="sendMessage"
+                        t-att-disabled="state.loading"
                     >
-                        Send
+
+                        <t t-if="state.loading">
+                            Sending...
+                        </t>
+
+                        <t t-else="">
+                            Send
+                        </t>
+
                     </button>
 
                 </div>

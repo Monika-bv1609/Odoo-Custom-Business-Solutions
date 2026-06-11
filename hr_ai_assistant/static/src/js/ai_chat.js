@@ -10,6 +10,7 @@ export class AIChat extends Component {
         this.state = useState({
             open: false,
             message: "",
+            loading: false,
             messages: [
                 {
                     id: 1,
@@ -26,17 +27,24 @@ export class AIChat extends Component {
 
     onKeyDown(ev) {
 
-        if (ev.key === "Enter") {
-
+        if (
+            ev.key === "Enter"
+            && !this.state.loading
+        ) {
             this.sendMessage();
         }
     }
 
     async sendMessage() {
 
-        if (!this.state.message.trim()) {
+        if (
+            !this.state.message.trim()
+            || this.state.loading
+        ) {
             return;
         }
+
+        this.state.loading = true;
 
         const userMessage = this.state.message;
 
@@ -50,6 +58,16 @@ export class AIChat extends Component {
 
         this.scrollToBottom();
 
+        const typingId = Date.now() + 100;
+
+        this.state.messages.push({
+            id: typingId,
+            sender: "ai",
+            text: "Thinking..."
+        });
+
+        this.scrollToBottom();
+
         try {
 
             const currentUser = session
@@ -59,18 +77,8 @@ export class AIChat extends Component {
                         partner.active === true
                 );
 
-            console.log(
-                "CURRENT USER:",
-                currentUser
-            );
-
-            console.log(
-                "USER ID:",
-                currentUser.userId
-            );
-
             const response = await fetch(
-                "http://127.0.0.1:8001/ask-hr",
+                "http://127.0.0.1:8000/ask-hr",
                 {
                     method: "POST",
                     headers: {
@@ -85,23 +93,52 @@ export class AIChat extends Component {
 
             const data = await response.json();
 
-            this.state.messages.push({
-                id: Date.now() + 1,
-                sender: "ai",
-                text: data.answer,
-            });
+            const index =
+                this.state.messages.findIndex(
+                    m => m.id === typingId
+                );
+
+            if (index !== -1) {
+
+                this.state.messages[index] = {
+
+                    id: typingId,
+
+                    sender: "ai",
+
+                    text: data.answer
+                };
+            }
 
             this.scrollToBottom();
 
         } catch (error) {
 
-            this.state.messages.push({
-                id: Date.now() + 2,
-                sender: "ai",
-                text: "Unable to connect to HR Agent.",
-            });
+            const index =
+                this.state.messages.findIndex(
+                    m => m.id === typingId
+                );
+
+            if (index !== -1) {
+
+                this.state.messages[index] = {
+
+                    id: typingId,
+
+                    sender: "ai",
+
+                    text:
+                        "Unable to connect to HR Agent."
+                };
+            }
 
             console.error(error);
+
+            this.scrollToBottom();
+
+        } finally {
+
+            this.state.loading = false;
         }
     }
 
@@ -114,11 +151,12 @@ export class AIChat extends Component {
             );
 
             if (container) {
+
                 container.scrollTop =
                     container.scrollHeight;
             }
 
-        }, 0);
+        }, 50);
     }
 }
 
