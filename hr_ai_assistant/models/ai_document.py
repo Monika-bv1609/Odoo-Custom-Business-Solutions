@@ -62,14 +62,21 @@ class AIDocument(models.Model):
             )
         }
 
+        _logger.info("UPLOADING PDF TO RAG")
+        _logger.info("FILE NAME = %s", self.filename)
+        _logger.info("URL = http://127.0.0.1:8001/read-pdf")
+
         response = requests.post(
-            "http://127.0.0.1:8000/read-pdf",
+            "http://127.0.0.1:8001/read-pdf",
             files={
                 "files": (
                     self.filename,
                     BytesIO(pdf_content),
                     "application/pdf"
                 )
+            },
+            data={
+                "policy_type": self.document_type
             },
             timeout=60
         )
@@ -113,3 +120,33 @@ class AIDocument(models.Model):
                     )
 
         return result
+    
+    def _delete_from_rag(self):
+
+        self.ensure_one()
+
+        response = requests.delete(
+            "http://127.0.0.1:8001/delete-pdf",
+            params={
+                "filename": self.filename
+            },
+            timeout=60
+        )
+
+        response.raise_for_status()
+
+        return response.json()
+    
+
+    def unlink(self):
+
+        for record in self:
+            try:
+                record._delete_from_rag()
+            except Exception:
+                _logger.exception(
+                    "Failed to delete vectors for %s",
+                    record.filename
+                )
+
+        return super().unlink()
