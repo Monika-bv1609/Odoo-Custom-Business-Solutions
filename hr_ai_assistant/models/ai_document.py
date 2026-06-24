@@ -63,7 +63,7 @@ class AIDocument(models.Model):
         }
 
         response = requests.post(
-            "http://127.0.0.1:8000/read-pdf",
+            "http://127.0.0.1:8001/read-pdf",
             files={
                 "files": (
                     self.filename,
